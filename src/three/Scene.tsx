@@ -225,28 +225,39 @@ function CameraRig() {
   ready.current = true;
 }
 
-const lambda = prefersReducedMotion() ? 20 : 10;
-const D = THREE.MathUtils.damp;
 
-camera.position.x = D(camera.position.x, target.x, lambda, delta);
-camera.position.y = D(camera.position.y, target.y, lambda, delta);
-camera.position.z = D(camera.position.z, target.z, lambda, delta);
+useFrame(({ camera }, delta) => {
+  const s = sampleTimeline(scrollState.sectionPos);
+  target.set(s.cam[0], s.cam[1], s.cam[2]);
+  look.set(s.look[0], s.look[1], s.look[2]);
 
-lookCurrent.x = D(lookCurrent.x, look.x, lambda, delta);
-lookCurrent.y = D(lookCurrent.y, look.y, lambda, delta);
-lookCurrent.z = D(lookCurrent.z, look.z, lambda, delta);
-
-camera.lookAt(lookCurrent);
-
-if (camera instanceof THREE.PerspectiveCamera) {
-  if (Math.abs(camera.fov - s.fov) > 0.01) {
-    camera.fov = D(camera.fov, s.fov, 3, delta);
-    camera.updateProjectionMatrix();
+  if (!ready.current) {
+    camera.position.copy(target);
+    lookCurrent.copy(look);
+    ready.current = true;
   }
-}
 
-  return null;
-},
+  const lambda = prefersReducedMotion() ? 20 : 10;
+  const D = THREE.MathUtils.damp;
+
+  camera.position.x = D(camera.position.x, target.x, lambda, delta);
+  camera.position.y = D(camera.position.y, target.y, lambda, delta);
+  camera.position.z = D(camera.position.z, target.z, lambda, delta);
+
+  lookCurrent.x = D(lookCurrent.x, look.y, lambda, delta);
+  lookCurrent.y = D(lookCurrent.y, look.y, lambda, delta);
+  lookCurrent.z = D(lookCurrent.z, look.z, lambda, delta);
+
+  camera.lookAt(lookCurrent);
+
+  if (camera instanceof THREE.PerspectiveCamera) {
+    if (Math.abs(camera.fov - s.fov) > 0.01) {
+      camera.fov = D(camera.fov, s.fov, 3, delta);
+      camera.updateProjectionMatrix();
+    }
+  }
+});
+
 
 export default function Scene() {
   if (!hasWebGL()) return null;
