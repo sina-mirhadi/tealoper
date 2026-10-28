@@ -219,22 +219,34 @@ function CameraRig() {
       ready.current = true;
     }
 
-    const lambda = prefersReducedMotion() ? 20 : 10;
-    const D = THREE.MathUtils.damp;
-    camera.position.x = D(camera.position.x, target.x, lambda, delta);
-    camera.position.y = D(camera.position.y, target.y, lambda, delta);
-    camera.position.z = D(camera.position.z, target.z, lambda, delta);
-    lookCurrent.x = D(lookCurrent.x, look.x, lambda, delta);
-    lookCurrent.y = D(lookCurrent.y, look.y, lambda, delta);
-    lookCurrent.z = D(lookCurrent.z, look.z, lambda, delta);
-    camera.lookAt(lookCurrent);
+    if (!ready.current) {
+  camera.position.copy(target);
+  lookCurrent.copy(look);
+  ready.current = true;
+}
 
-    if (camera instanceof THREE.PerspectiveCamera) {
-      if (Math.abs(camera.fov - s.fov) > 0.01) {
-      camera.fov = D(camera.fov, s.fov, 3, delta);
-      camera.updateProjectionMatrix();
-      }
-    }
+const lambda = prefersReducedMotion() ? 20 : 10;
+const D = THREE.MathUtils.damp;
+
+camera.position.x = D(camera.position.x, target.x, lambda, delta);
+camera.position.y = D(camera.position.y, target.y, lambda, delta);
+camera.position.z = D(camera.position.z, target.z, lambda, delta);
+
+lookCurrent.x = D(lookCurrent.x, look.x, lambda, delta);
+lookCurrent.y = D(lookCurrent.y, look.y, lambda, delta);
+lookCurrent.z = D(lookCurrent.z, look.z, lambda, delta);
+
+camera.lookAt(lookCurrent);
+
+if (camera instanceof THREE.PerspectiveCamera) {
+  if (Math.abs(camera.fov - s.fov) > 0.01) {
+    camera.fov = D(camera.fov, s.fov, 3, delta);
+    camera.updateProjectionMatrix();
+  }
+}
+
+return null;
+}
 
   return null;
 }
