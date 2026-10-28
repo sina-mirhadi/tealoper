@@ -245,11 +245,8 @@ if (camera instanceof THREE.PerspectiveCamera) {
   }
 }
 
-return null;
-}
-
   return null;
-}
+},
 
 export default function Scene() {
   if (!hasWebGL()) return null;
