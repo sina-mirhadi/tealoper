@@ -214,11 +214,11 @@ function CameraRig() {
     look.set(s.look[0], s.look[1], s.look[2]);
 
     if (camera instanceof THREE.PerspectiveCamera) {
-  if (Math.abs(camera.fov - s.fov) > 0.01) {
-    camera.fov = D(camera.fov, s.fov, 3, delta);
-    camera.updateProjectionMatrix();
-  }
-}
+      if (Math.abs(camera.fov - s.fov) > 0.01) {
+      camera.fov = D(camera.fov, s.fov, 3, delta);
+      camera.updateProjectionMatrix();
+      }
+    }
 
     const lambda = prefersReducedMotion() ? 20 : 10;
     const D = THREE.MathUtils.damp;
