@@ -213,11 +213,12 @@ function CameraRig() {
     target.set(s.cam[0], s.cam[1], s.cam[2]);
     look.set(s.look[0], s.look[1], s.look[2]);
 
-    if (!ready.current) {
-      camera.position.copy(target);
-      lookCurrent.copy(look);
-      ready.current = true;
-    }
+    if (camera instanceof THREE.PerspectiveCamera) {
+  if (Math.abs(camera.fov - s.fov) > 0.01) {
+    camera.fov = D(camera.fov, s.fov, 3, delta);
+    camera.updateProjectionMatrix();
+  }
+}
 
     const lambda = prefersReducedMotion() ? 20 : 10;
     const D = THREE.MathUtils.damp;
